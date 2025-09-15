@@ -6,7 +6,7 @@
   --step: calc(var(--door-size) + 2 * var(--cell-padding));
   --advent-background-image: url('media/background.jpeg');
   --advent-background-image-medium: url('media/background2.png');
-  --advent-background-image-small: url('media/background2.png');
+  --advent-background-image-small: url('media/background3.png');
 }
 
 body {
