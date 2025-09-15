@@ -1,44 +1,41 @@
 const storageKey = 'advent-calendar-opened-doors';
 const startDate = new Date(2025, 8, 16);
+startDate.setHours(0, 0, 0, 0);
 
-function cloneDateWithOffset(index) {
+function getReleaseDate(index) {
   const date = new Date(startDate);
   date.setDate(startDate.getDate() + index);
   date.setHours(0, 0, 0, 0);
   return date;
 }
 
-function getStoredOpenDoors() {
+function loadUnlockedSet() {
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) {
-      return [];
+      return new Set();
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      return parsed.filter((value) => Number.isInteger(value));
+    if (!Array.isArray(parsed)) {
+      return new Set();
     }
+    const sanitized = parsed
+      .filter((value) => Number.isInteger(value) && value >= 0)
+      .map((value) => value);
+    return new Set(sanitized);
   } catch (error) {
     console.warn('Impossible de lire les jours ouverts enregistrés :', error);
+    return new Set();
   }
-  return [];
 }
 
-function persistOpenDoors(indices) {
+function persistUnlockedSet(unlockedSet) {
   try {
-    localStorage.setItem(storageKey, JSON.stringify(indices));
+    const sorted = Array.from(unlockedSet).sort((a, b) => a - b);
+    localStorage.setItem(storageKey, JSON.stringify(sorted));
   } catch (error) {
     console.warn("Impossible d'enregistrer la progression du calendrier :", error);
   }
-}
-
-function arePreviousDoorsOpen(doors, index) {
-  for (let i = 0; i < index; i += 1) {
-    if (!doors[i].pane.classList.contains('door__hinge__pane--open')) {
-      return false;
-    }
-  }
-  return true;
 }
 
 function formatDuration(ms) {
@@ -63,15 +60,15 @@ function formatDuration(ms) {
   return parts.join(' ');
 }
 
-function initialiseDoors() {
+document.addEventListener('DOMContentLoaded', () => {
   const panes = Array.from(document.querySelectorAll('.door__hinge__pane'));
   if (!panes.length) {
-    return [];
+    return;
   }
 
-  const storedOpen = new Set(getStoredOpenDoors());
+  const unlockedSet = loadUnlockedSet();
 
-  return panes.map((pane, index) => {
+  const doors = panes.map((pane, index) => {
     const doorElement = pane.closest('.door');
     let countdown = doorElement.querySelector('.door__countdown');
     if (!countdown) {
@@ -82,104 +79,91 @@ function initialiseDoors() {
 
     const label = pane.querySelector('.number');
     if (label) {
-      label.textContent = `Jour ${index + 1}`;
+      label.textContent = String(index + 1);
     }
 
-    const releaseDate = cloneDateWithOffset(index);
+    const releaseDate = getReleaseDate(index);
     pane.dataset.releaseDate = releaseDate.toISOString();
 
-    if (storedOpen.has(index)) {
+    if (unlockedSet.has(index)) {
       pane.classList.add('door__hinge__pane--open');
-      doorElement.classList.add('door--opened');
+      doorElement.classList.add('door--opened', 'door--unlocked');
     }
 
     return {
+      index,
       pane,
       doorElement,
       countdown,
-      index,
       releaseDate,
     };
   });
-}
 
-function setupInteractions(doors) {
-  const openedSet = new Set(
-    doors
-      .map((door, index) => (door.pane.classList.contains('door__hinge__pane--open') ? index : null))
-      .filter((index) => index !== null),
-  );
-
-  function updateStorage() {
-    persistOpenDoors(Array.from(openedSet).sort((a, b) => a - b));
+  function arePreviousUnlocked(index) {
+    for (let i = 0; i < index; i += 1) {
+      if (!unlockedSet.has(i)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   function updateDoorStates() {
     const now = new Date();
-    let nextDoor = null;
+    let nextLockedDoor = null;
 
     doors.forEach((door) => {
+      const unlocked = unlockedSet.has(door.index);
       const isOpen = door.pane.classList.contains('door__hinge__pane--open');
-      const previousOpen = arePreviousDoorsOpen(doors, door.index);
-      const unlockedByDate = now >= door.releaseDate;
-      const isAvailable = !isOpen && previousOpen && unlockedByDate;
+      const previousUnlocked = arePreviousUnlocked(door.index);
+      const availableByDate = now >= door.releaseDate;
+      const canOpen = previousUnlocked && availableByDate;
 
-      door.doorElement.classList.toggle('door--available', isAvailable);
-      door.doorElement.classList.toggle('door--locked', !isOpen && !isAvailable);
+      door.doorElement.classList.toggle('door--available', !unlocked && canOpen);
+      door.doorElement.classList.toggle('door--locked', !unlocked && !canOpen);
+      door.doorElement.classList.toggle('door--unlocked', unlocked);
       door.doorElement.classList.toggle('door--opened', isOpen);
-
-      if (!isOpen && !nextDoor && previousOpen) {
-        nextDoor = door;
-      }
 
       door.countdown.textContent = '';
       door.countdown.classList.remove('door__countdown--visible');
       door.doorElement.classList.remove('door--show-countdown');
+
+      if (!unlocked && !nextLockedDoor && previousUnlocked) {
+        nextLockedDoor = door;
+      }
     });
 
-    if (nextDoor) {
-      const diff = nextDoor.releaseDate.getTime() - now.getTime();
+    if (nextLockedDoor) {
+      const diff = nextLockedDoor.releaseDate.getTime() - now.getTime();
       if (diff > 0) {
-        nextDoor.countdown.textContent = `Prochain cadeau dans ${formatDuration(diff)}`;
-      } else {
-        nextDoor.countdown.textContent = 'Cadeau disponible !';
+        nextLockedDoor.countdown.textContent = `Prochain cadeau dans ${formatDuration(diff)}`;
+        nextLockedDoor.countdown.classList.add('door__countdown--visible');
+        nextLockedDoor.doorElement.classList.add('door--show-countdown');
       }
-      nextDoor.countdown.classList.add('door__countdown--visible');
-      nextDoor.doorElement.classList.add('door--show-countdown');
     }
   }
 
   doors.forEach((door) => {
     door.pane.addEventListener('click', () => {
-      const alreadyOpen = door.pane.classList.contains('door__hinge__pane--open');
-      if (alreadyOpen) {
-        return;
-      }
-
-      if (!arePreviousDoorsOpen(doors, door.index)) {
-        return;
-      }
-
+      const unlocked = unlockedSet.has(door.index);
       const now = new Date();
-      if (now < door.releaseDate) {
-        return;
+
+      if (!unlocked) {
+        if (!arePreviousUnlocked(door.index) || now < door.releaseDate) {
+          return;
+        }
+        unlockedSet.add(door.index);
+        persistUnlockedSet(unlockedSet);
       }
 
-      door.pane.classList.add('door__hinge__pane--open');
-      door.doorElement.classList.add('door--opened');
-      openedSet.add(door.index);
-      updateStorage();
+      const isOpen = door.pane.classList.toggle('door__hinge__pane--open');
+      door.doorElement.classList.toggle('door--opened', isOpen);
+      door.doorElement.classList.add('door--unlocked');
+
       updateDoorStates();
     });
   });
 
   updateDoorStates();
   setInterval(updateDoorStates, 1000);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const doors = initialiseDoors();
-  if (doors.length) {
-    setupInteractions(doors);
-  }
 });

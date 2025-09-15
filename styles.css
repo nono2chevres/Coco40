@@ -1,9 +1,13 @@
 :root {
+  --columns: 5;
+  --rows: 8;
   --advent-padding: clamp(12px, 3vw, 36px);
   --door-size: min(14vw, 80px);
   --cell-padding: clamp(4px, 0.7vw, 8px);
   --base-offset: calc(var(--advent-padding) + var(--cell-padding));
   --step: calc(var(--door-size) + 2 * var(--cell-padding));
+  --advent-width: calc(2 * var(--advent-padding) + var(--columns) * var(--step));
+  --advent-height: calc(2 * var(--advent-padding) + var(--rows) * var(--step));
   --advent-background-image: url('media/background.jpeg');
   --advent-background-image-medium: url('media/background2.png');
   --advent-background-image-small: url('media/background3.png');
@@ -29,39 +33,30 @@ body {
   box-sizing: border-box;
 }
 
-.frame {
-  position: relative;
+.page__background {
   width: min(95vw, 900px);
+  padding: clamp(36px, 7vw, 96px);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(28px, 7vw, 96px);
-  box-sizing: border-box;
-}
-
-.frame::before {
-  content: "";
-  position: absolute;
-  inset: 0;
   background-image: url('media/frame.svg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  z-index: 0;
 }
 
-.frame__inner {
-  position: relative;
-  z-index: 1;
+.calendar {
   width: 100%;
   max-width: 720px;
+  padding: clamp(12px, 3vw, 36px);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(12px, 3vw, 36px);
-  box-sizing: border-box;
 }
 
 .advent {
+  width: min(100%, var(--advent-width));
   padding: var(--advent-padding);
   display: flex;
   flex-direction: column;
@@ -69,11 +64,10 @@ body {
   justify-content: center;
   background-image: var(--advent-background-image);
   background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  background-position: top left;
+  background-size: var(--advent-width) var(--advent-height);
   border-radius: 18px;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
-  max-width: 100%;
 }
 
 @media (max-width: 1400px) {
@@ -149,6 +143,7 @@ body {
   background-image: var(--advent-background-image);
   background-repeat: no-repeat;
   background-position: calc(-1 * (var(--base-offset) + var(--col, 0) * var(--step))) calc(-1 * (var(--base-offset) + var(--row, 0) * var(--step)));
+  background-size: var(--advent-width) var(--advent-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -202,11 +197,10 @@ body {
   padding: 0;
   margin: 0;
   font-family: 'Caveat', cursive;
-  font-size: clamp(16px, 3vw, 32px);
-  letter-spacing: 1px;
+  font-size: clamp(20px, 3.2vw, 34px);
   text-align: center;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
-  line-height: 1.1; }
+  line-height: 1; }
 
 .number--black {
   color: black; }
@@ -219,11 +213,12 @@ body {
 }
 
 .door--locked .door__hinge__pane--front {
-  filter: grayscale(0.15);
-  opacity: 0.9;
+  filter: grayscale(0.2);
+  opacity: 0.85;
 }
 
-.door--available .door__hinge__pane {
+.door--available .door__hinge__pane,
+.door--unlocked .door__hinge__pane {
   cursor: pointer;
 }
 
@@ -231,10 +226,6 @@ body {
   filter: none;
   opacity: 1;
   box-shadow: 0 0 20px rgba(255, 214, 102, 0.65);
-}
-
-.door--opened .door__hinge__pane {
-  cursor: default;
 }
 
 .door--opened .door__hinge__pane--front {
