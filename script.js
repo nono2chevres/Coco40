@@ -68,6 +68,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const unlockedSet = loadUnlockedSet();
 
+  function updateDoorContentVisibility(doorElement, isOpen) {
+    const content = doorElement.querySelector('.door__content');
+    if (content) {
+      content.setAttribute('aria-hidden', String(!isOpen));
+    }
+  }
+
+  function handleDoorVideoPlayback(door, isOpen) {
+    if (door.index !== 0) {
+      return;
+    }
+
+    const video = door.doorElement.querySelector('.door__video');
+    if (!(video instanceof HTMLVideoElement)) {
+      return;
+    }
+
+    if (isOpen) {
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.catch(() => {});
+      }
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }
+
   const doors = panes.map((pane, index) => {
     const doorElement = pane.closest('.door');
     let countdown = doorElement.querySelector('.message');
@@ -90,13 +118,35 @@ document.addEventListener('DOMContentLoaded', () => {
       doorElement.classList.add('door--opened', 'door--unlocked');
     }
 
-    return {
+    const doorData = {
       index,
       pane,
       doorElement,
       countdown,
       releaseDate,
     };
+
+    const isOpen = pane.classList.contains('door__hinge__pane--open');
+    updateDoorContentVisibility(doorElement, isOpen);
+
+    const closeButton = doorElement.querySelector('.door__content__close');
+    if (closeButton) {
+      closeButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (!pane.classList.contains('door__hinge__pane--open')) {
+          return;
+        }
+
+        pane.classList.remove('door__hinge__pane--open');
+        doorElement.classList.remove('door--opened');
+        doorElement.classList.add('door--unlocked');
+        updateDoorContentVisibility(doorElement, false);
+        handleDoorVideoPlayback(doorData, false);
+        updateDoorStates();
+      });
+    }
+
+    return doorData;
   });
 
   function arePreviousUnlocked(index) {
@@ -127,6 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
       door.countdown.textContent = '';
       door.countdown.classList.remove('door__countdown--visible');
       door.doorElement.classList.remove('door--show-countdown');
+
+      updateDoorContentVisibility(door.doorElement, isOpen);
 
       if (!unlocked && !nextLockedDoor && previousUnlocked) {
         nextLockedDoor = door;
@@ -159,6 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const isOpen = door.pane.classList.toggle('door__hinge__pane--open');
       door.doorElement.classList.toggle('door--opened', isOpen);
       door.doorElement.classList.add('door--unlocked');
+
+      updateDoorContentVisibility(door.doorElement, isOpen);
+      handleDoorVideoPlayback(door, isOpen);
 
       updateDoorStates();
     });
