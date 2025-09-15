@@ -11,7 +11,7 @@
     <div class="advent">
         <div class="advent__row">
             <div class="advent__row__cell">
-                <div class="door">
+                <div class="door door--has-video">
                     <div class="door__hinge">
                         <div class="door__hinge__pane">
                             <div class="door__hinge__pane--front door__hinge__pane--one"><span
@@ -31,6 +31,15 @@
                                 <div class="pane pane--bottom"></div>
                             </div>
                         </div>
+                    </div>
+                    <div class="door__content door__content--video" aria-hidden="true">
+                        <button type="button" class="door__content__close" aria-label="Fermer la porte 1">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <video class="door__video" controls preload="none">
+                            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                            Votre navigateur ne supporte pas la lecture vidéo.
+                        </video>
                     </div>
                 </div>
             </div>
