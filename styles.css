@@ -1,6 +1,6 @@
 :root {
   --advent-padding: 50px;
-  --door-size: 250px;
+  --door-size: 17vw;
   --cell-padding: 10px;
   --base-offset: calc(var(--advent-padding) + var(--cell-padding));
   --step: calc(var(--door-size) + 2 * var(--cell-padding));
