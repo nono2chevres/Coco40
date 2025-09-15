@@ -4,6 +4,9 @@
   --cell-padding: 6px;
   --base-offset: calc(var(--advent-padding) + var(--cell-padding));
   --step: calc(var(--door-size) + 2 * var(--cell-padding));
+  --advent-background-image: url('media/background.jpeg');
+  --advent-background-image-medium: url('media/background2.png');
+  --advent-background-image-small: url('media/background2.png');
 }
 
 body {
@@ -11,11 +14,23 @@ body {
   margin: 0; }
 
 .advent {
-  background: url('media/background.jpeg');
-    float: left;
+  float: left;
   padding: var(--advent-padding);
+  background-image: var(--advent-background-image);
   background-repeat: no-repeat;
  }
+
+@media (max-width: 1400px) {
+  :root {
+    --advent-background-image: var(--advent-background-image-medium);
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --advent-background-image: var(--advent-background-image-small);
+  }
+}
 
 .advent__row {
   clear: both; }
@@ -59,7 +74,7 @@ body {
 .door__hinge__pane--front {
   z-index: 10;
   border: 1px dashed #3f3f3e;
-  background: url('media/background.jpeg');
+  background-image: var(--advent-background-image);
   background-repeat: no-repeat;
   background-position: calc(-1 * (var(--base-offset) + var(--col, 0) * var(--step))) calc(-1 * (var(--base-offset) + var(--row, 0) * var(--step)));
  }
