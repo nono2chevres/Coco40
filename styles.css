@@ -11,7 +11,8 @@
 
 body {
   padding: 0;
-  margin: 0; }
+  margin: 0;
+font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
 
 .advent {
   float: left;
@@ -230,5 +231,14 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6e562a', endColorstr='#a18762',GradientType=1 ); }
 
 
-
+.message {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: auto;
+  z-index: 15;
+  border-radius: 999px;
+  padding: 8px;
+  background: linear-gradient(45deg, #ff5f6d, #ffc371)
+}
 
