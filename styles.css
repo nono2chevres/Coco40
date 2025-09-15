@@ -1,3 +1,11 @@
+:root {
+  --advent-padding: 100px;
+  --door-size: 250px;
+  --cell-padding: 10px;
+  --base-offset: calc(var(--advent-padding) + var(--cell-padding));
+  --step: calc(var(--door-size) + 2 * var(--cell-padding));
+}
+
 body {
   padding: 0;
   margin: 0; }
@@ -5,7 +13,7 @@ body {
 .advent {
   background: url('media/background.jpeg');
     float: left;
-  padding: 100px;
+  padding: var(--advent-padding);
   background-repeat: no-repeat;
  }
 
@@ -14,11 +22,11 @@ body {
 
 .advent__row__cell {
   float: left;
-  padding: 10px; }
+  padding: var(--cell-padding); }
 
 .door {
-  width: 250px;
-  height: 250px;
+  width: var(--door-size);
+  height: var(--door-size);
   position: relative; }
 
 .door__hinge {
@@ -52,7 +60,9 @@ body {
   z-index: 10;
   border: 1px dashed #3f3f3e;
   background: url('media/background.jpeg');
-  background-repeat: no-repeat; }
+  background-repeat: no-repeat;
+  background-position: calc(-1 * (var(--base-offset) + var(--col, 0) * var(--step))) calc(-1 * (var(--base-offset) + var(--row, 0) * var(--step)));
+ }
 
 .door__hinge__pane--back {
   z-index: 9;
@@ -99,143 +109,51 @@ body {
 .number--black {
   color: black; }
 
-.number--white {
-  color: white; }
+  .number--white {
+    color: white; }
 
-.door__hinge__pane--one {
-  background-position: -110px -110px; }
+  .door__hinge__pane--one { --col: 0; --row: 0; }
+  .door__hinge__pane--two { --col: 1; --row: 0; }
+  .door__hinge__pane--three { --col: 2; --row: 0; }
+  .door__hinge__pane--four { --col: 3; --row: 0; }
+  .door__hinge__pane--five { --col: 4; --row: 0; }
+  .door__hinge__pane--six { --col: 0; --row: 1; }
+  .door__hinge__pane--seven { --col: 1; --row: 1; }
+  .door__hinge__pane--eight { --col: 2; --row: 1; }
+  .door__hinge__pane--nine { --col: 3; --row: 1; }
+  .door__hinge__pane--ten { --col: 4; --row: 1; }
+  .door__hinge__pane--eleven { --col: 0; --row: 2; }
+  .door__hinge__pane--twelve { --col: 1; --row: 2; }
+  .door__hinge__pane--thirteen { --col: 2; --row: 2; }
+  .door__hinge__pane--fourteen { --col: 3; --row: 2; }
+  .door__hinge__pane--fifteen { --col: 4; --row: 2; }
+  .door__hinge__pane--sixteen { --col: 0; --row: 3; }
+  .door__hinge__pane--seventeen { --col: 1; --row: 3; }
+  .door__hinge__pane--eighteen { --col: 2; --row: 3; }
+  .door__hinge__pane--nineteen { --col: 3; --row: 3; }
+  .door__hinge__pane--twenty { --col: 4; --row: 3; }
+  .door__hinge__pane--twenty-one { --col: 0; --row: 4; }
+  .door__hinge__pane--twenty-two { --col: 1; --row: 4; }
+  .door__hinge__pane--twenty-three { --col: 2; --row: 4; }
+  .door__hinge__pane--twenty-four { --col: 3; --row: 4; }
+  .door__hinge__pane--twenty-five { --col: 4; --row: 4; }
+  .door__hinge__pane--twenty-six { --col: 0; --row: 5; }
+  .door__hinge__pane--twenty-seven { --col: 1; --row: 5; }
+  .door__hinge__pane--twenty-eight { --col: 2; --row: 5; }
+  .door__hinge__pane--twenty-nine { --col: 3; --row: 5; }
+  .door__hinge__pane--thirty { --col: 4; --row: 5; }
+  .door__hinge__pane--thirty-one { --col: 0; --row: 6; }
+  .door__hinge__pane--thirty-two { --col: 1; --row: 6; }
+  .door__hinge__pane--thirty-three { --col: 2; --row: 6; }
+  .door__hinge__pane--thirty-four { --col: 3; --row: 6; }
+  .door__hinge__pane--thirty-five { --col: 4; --row: 6; }
+  .door__hinge__pane--thirty-six { --col: 0; --row: 7; }
+  .door__hinge__pane--thirty-seven { --col: 1; --row: 7; }
+  .door__hinge__pane--thirty-eight { --col: 2; --row: 7; }
+  .door__hinge__pane--thirty-nine { --col: 3; --row: 7; }
+  .door__hinge__pane--fourty { --col: 4; --row: 7; }
 
-.door__hinge__pane--two {
-  background-position: -380px -110px; }
-
-.door__hinge__pane--three {
-  background-position: -650px -110px; }
-
-.door__hinge__pane--four {
-  background-position: -920px -110px; }
-
-.door__hinge__pane--five {
-  background-position: -1190px -110px; }
-
-.door__hinge__pane--six {
-  background-position: -110px -380px; }
-
-
-.door__hinge__pane--seven {
-  background-position: -380px -380px; }
-
-
-.door__hinge__pane--eight {
-  background-position: -650px -380px; }
-
-
-.door__hinge__pane--nine {
-  background-position: -920px -380px; }
-
-.door__hinge__pane--ten {
-  background-position: -1190px -380px; }
-
-.door__hinge__pane--eleven {
-  background-position: -110px -650px; }
-
-
-.door__hinge__pane--twelve {
-    background-position: -380px -650px; }
-
-
-.door__hinge__pane--thirteen {
-    background-position: -650px -650px; }
-
-
-.door__hinge__pane--fourteen {
-    background-position: -920px -650px; }
-
-.door__hinge__pane--fifteen {
-  background-position: -1190px -650px; }
-
-.door__hinge__pane--sixteen {
-    background-position: -110px -920px; }
-
-.door__hinge__pane--seventeen {
-background-position: -380px -920px; }
-
-
-.door__hinge__pane--eighteen {
-    background-position: -650px -920px; }
-
-.door__hinge__pane--nineteen {
-  background-position: -920px -920px; }
-
-.door__hinge__pane--twenty {
-    background-position: -1190px -920px; }
-
-.door__hinge__pane--twenty-one {
-    background-position: -110px -1190px; }
-
-.door__hinge__pane--twenty-two {
-background-position: -380px -1190px; }
-
-
-.door__hinge__pane--twenty-three {
-    background-position: -650px -1190px; }
-
-.door__hinge__pane--twenty-four {
-  background-position: -920px -1190px; }
-
-.door__hinge__pane--twenty-five {
-    background-position: -1190px -1190px; }
-
-.door__hinge__pane--twenty-six {
-background-position: -110px -1460px; }
-
-.door__hinge__pane--twenty-seven {
-background-position: -380px -1460px; }
-
-
-.door__hinge__pane--twenty-eight {
-    background-position: -650px -1460px; }
-
-.door__hinge__pane--twenty-nine {
-  background-position: -920px -1460px; }
-
-.door__hinge__pane--thirty {
-    background-position: -1190px -1460px; }
-
-.door__hinge__pane--thirty-one {
-background-position: -110px -1730px; }
-
-.door__hinge__pane--thirty-two {
-background-position: -380px -1730px; }
-
-
-.door__hinge__pane--thirty-three {
-    background-position: -650px -1730px; }
-
-.door__hinge__pane--thirty-four {
-  background-position: -920px -1730px; }
-
-.door__hinge__pane--thirty-five {
-    background-position: -1190px -1730px; }
-
-.door__hinge__pane--thirty-six {
-background-position: -110px -2000px; }
-
-.door__hinge__pane--thirty-seven {
-background-position: -380px -2000px; }
-
-
-.door__hinge__pane--thirty-eight {
-    background-position: -650px -2000px; }
-
-.door__hinge__pane--thirty-nine {
-  background-position: -920px -2000px; }
-
-.door__hinge__pane--fourty {
-    background-position: -1190px -2000px; }
-
-
-  
-.cube {
+  .cube {
   position: absolute;
   top: 12px;
   left: 12px; }
