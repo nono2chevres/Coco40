@@ -1,7 +1,7 @@
 :root {
   --advent-padding: 45px;
   --door-size: 12vw;
-  --cell-padding: 10px;
+  --cell-padding: 6px;
   --base-offset: calc(var(--advent-padding) + var(--cell-padding));
   --step: calc(var(--door-size) + 2 * var(--cell-padding));
 }
@@ -155,8 +155,8 @@ body {
 
   .cube {
   position: absolute;
-  top: 12px;
-  left: 12px; }
+  top: var(--cell-padding);
+  left: var(--cell-padding); }
 
 .cube__container {
   width: calc(0.8 * var(--door-size));
