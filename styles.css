@@ -1,6 +1,6 @@
 :root {
-  --advent-padding: 50px;
-  --door-size: 15vw;
+  --advent-padding: 45px;
+  --door-size: 14vw;
   --cell-padding: 10px;
   --base-offset: calc(var(--advent-padding) + var(--cell-padding));
   --step: calc(var(--door-size) + 2 * var(--cell-padding));
@@ -213,5 +213,6 @@ body {
   background: -webkit-linear-gradient(left, #6e562a 0%, #a18762 100%);
   background: linear-gradient(to right, #6e562a 0%, #a18762 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6e562a', endColorstr='#a18762',GradientType=1 ); }
+
 
 
