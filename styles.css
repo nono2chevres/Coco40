@@ -233,7 +233,7 @@ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-seri
 
 .message {
   position: fixed;
-  bottom: 25px;
+  top: 25px;
   right: 25px;
   width: auto;
   z-index: 15;
