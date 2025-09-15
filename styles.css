@@ -1,6 +1,6 @@
 :root {
   --advent-padding: 50px;
-  --door-size: 200px;
+  --door-size: 250px;
   --cell-padding: 10px;
   --base-offset: calc(var(--advent-padding) + var(--cell-padding));
   --step: calc(var(--door-size) + 2 * var(--cell-padding));
@@ -35,8 +35,8 @@ body {
   left: 0; }
 
 .door__hinge__pane {
-  width: 222px;
-  height: 222px;
+  width: calc(0.888 * var(--door-size));
+  height: calc(0.888 * var(--door-size));
   display: block;
   position: relative;
   z-index: 1;
@@ -54,7 +54,7 @@ body {
 
 .door__hinge__pane--open .door__hinge__pane--back {
   z-index: 10;
-  transform: rotateY(0deg) translateX(-222px) translateZ(0px); }
+  transform: rotateY(0deg) translateX(calc(-0.888 * var(--door-size))) translateZ(0px); }
 
 .door__hinge__pane--front {
   z-index: 10;
@@ -71,7 +71,7 @@ body {
   -moz-transform-style: preserve-3d;
   -ms-transform-style: preserve-3d;
   transform-style: preserve-3d;
-  transform: rotateY(180deg) translateX(-222px) translateZ(0px);
+  transform: rotateY(180deg) translateX(calc(-0.888 * var(--door-size))) translateZ(0px);
   background-color: #9d845b;
   border: 1px solid #9d845b; }
 
@@ -87,8 +87,8 @@ body {
 
 .door__hinge__pane--open .door__hinge__pane--back .door__hinge__pane__shadow {
   position: relative;
-  width: 223px;
-  height: 223px;
+  width: calc(0.888 * var(--door-size) + 1px);
+  height: calc(0.888 * var(--door-size) + 1px);
   background-color: #9d845b; }
 
 .door__hinge__pane--open .door__hinge__pane--back .door__hinge__pane__shadow::before {
@@ -159,8 +159,8 @@ body {
   left: 12px; }
 
 .cube__container {
-  width: 200px;
-  height: 200px;
+  width: calc(0.8 * var(--door-size));
+  height: calc(0.8 * var(--door-size));
   position: relative;
   -webkit-perspective: 1000px;
   -moz-perspective: 1000px;
@@ -178,20 +178,20 @@ body {
 
 .pane {
   margin: 0;
-  width: 200px;
-  height: 200px;
+  width: calc(0.8 * var(--door-size));
+  height: calc(0.8 * var(--door-size));
   display: block;
   position: absolute; }
 
 .pane--back {
-  transform: rotateX(180deg) translateZ(100px);
+  transform: rotateX(180deg) translateZ(calc(0.4 * var(--door-size)));
   background-color: #9d845b;
   -webkit-box-shadow: inset 0px 0px 24px 3px #826b49;
   -moz-box-shadow: inset 0px 0px 24px 3px #826b49;
   box-shadow: inset 0px 0px 24px 3px #826b49; }
 
 .pane--right {
-  transform: rotateY(90deg) translateZ(100px);
+  transform: rotateY(90deg) translateZ(calc(0.4 * var(--door-size)));
   background: #816b44;
   background: -moz-linear-gradient(left, #816b44 0%, #998057 100%);
   background: -webkit-linear-gradient(left, #816b44 0%, #998057 100%);
@@ -199,15 +199,15 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#816b44', endColorstr='#998057',GradientType=1 ); }
 
 .pane--left {
-  transform: rotateY(-90deg) translateZ(100px);
+  transform: rotateY(-90deg) translateZ(calc(0.4 * var(--door-size)));
   background-color: #816b44; }
 
 .pane--top {
-  transform: rotateX(90deg) translateZ(100px);
+  transform: rotateX(90deg) translateZ(calc(0.4 * var(--door-size)));
   background-color: #735d36; }
 
 .pane--bottom {
-  transform: rotateX(-90deg) translateZ(100px);
+  transform: rotateX(-90deg) translateZ(calc(0.4 * var(--door-size)));
   background: #6e562a;
   background: -moz-linear-gradient(left, #6e562a 0%, #a18762 100%);
   background: -webkit-linear-gradient(left, #6e562a 0%, #a18762 100%);
