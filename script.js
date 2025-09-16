@@ -314,6 +314,7 @@ function createModalManager(modalElement) {
       }
 
       nodes.push(figure);
+
     } else {
       const fallback = document.createElement('p');
       fallback.className = 'door-modal__fallback';
