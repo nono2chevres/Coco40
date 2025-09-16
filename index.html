@@ -11,7 +11,7 @@
     <div class="advent">
         <div class="advent__row">
             <div class="advent__row__cell">
-                <div class="door">
+                <div class="door door--has-gift">
                     <div class="door__hinge">
                         <div class="door__hinge__pane">
                             <div class="door__hinge__pane--front door__hinge__pane--one"><span
@@ -31,6 +31,12 @@
                                 <div class="pane pane--bottom"></div>
                             </div>
                         </div>
+                    </div>
+                    <div class="door__content door__content--gift" aria-hidden="true">
+                        <button type="button" class="door__gift-button" data-door-gift-button aria-haspopup="dialog"
+                            aria-controls="door1-surprise-modal" aria-label="Ouvrir le cadeau">
+                            <img src="media/gift.svg" alt="" class="door__gift-image" aria-hidden="true">
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1034,6 +1040,20 @@
         </div>
 
 
+    </div>
+    <div class="door-modal" data-door-modal="1" aria-hidden="true">
+        <div class="door-modal__overlay" data-modal-close></div>
+        <div class="door-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="door1-modal-title">
+            <button type="button" class="door-modal__close" data-modal-close data-modal-initial-focus
+                aria-label="Fermer le message">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h2 id="door1-modal-title" class="door-modal__title">Quelqu'un a un message pour vous</h2>
+            <video class="door-modal__video" controls preload="none" poster="media/cadre.jpg">
+                <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
+        </div>
     </div>
     <div class="message"></div>
 </body>

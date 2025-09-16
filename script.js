@@ -61,12 +61,164 @@ function formatDuration(ms) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const doorOneGiftButton = document.querySelector('[data-door-gift-button]');
+  const doorOneModal = document.querySelector('[data-door-modal="1"]');
+  const doorOneModalCloseElements = doorOneModal
+    ? Array.from(doorOneModal.querySelectorAll('[data-modal-close]'))
+    : [];
+  const doorOneVideo = doorOneModal ? doorOneModal.querySelector('video') : null;
+  let doorOneLastFocusedElement = null;
+
+  function isDoorOneModalVisible() {
+    return Boolean(doorOneModal && doorOneModal.classList.contains('door-modal--visible'));
+  }
+
+  function setBodyModalState(isOpen) {
+    document.body.classList.toggle('body--modal-open', isOpen);
+  }
+
+  function openDoorOneModal() {
+    if (!doorOneModal) {
+      return;
+    }
+
+    doorOneLastFocusedElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    doorOneModal.classList.add('door-modal--visible');
+    doorOneModal.setAttribute('aria-hidden', 'false');
+    setBodyModalState(true);
+
+    const initialFocus = doorOneModal.querySelector('[data-modal-initial-focus]');
+    if (initialFocus instanceof HTMLElement) {
+      initialFocus.focus({ preventScroll: true });
+    }
+
+    if (doorOneVideo instanceof HTMLVideoElement) {
+      const playPromise = doorOneVideo.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.catch(() => {});
+      }
+    }
+  }
+
+  function closeDoorOneModal() {
+    if (!doorOneModal) {
+      return;
+    }
+
+    if (doorOneVideo instanceof HTMLVideoElement) {
+      doorOneVideo.pause();
+      doorOneVideo.currentTime = 0;
+    }
+
+    doorOneModal.classList.remove('door-modal--visible');
+    doorOneModal.setAttribute('aria-hidden', 'true');
+    setBodyModalState(false);
+
+    if (doorOneLastFocusedElement && document.contains(doorOneLastFocusedElement)) {
+      doorOneLastFocusedElement.focus({ preventScroll: true });
+    }
+
+    doorOneLastFocusedElement = null;
+  }
+
+  function trapDoorOneFocus(event) {
+    if (!doorOneModal) {
+      return;
+    }
+
+    const focusableSelectors = [
+      'button',
+      '[href]',
+      'input',
+      'select',
+      'textarea',
+      '[tabindex]:not([tabindex="-1"])',
+      'video',
+    ];
+
+    const focusableElements = Array.from(
+      doorOneModal.querySelectorAll(focusableSelectors.join(', '))
+    ).filter(
+      (element) =>
+        element instanceof HTMLElement &&
+        !element.hasAttribute('disabled') &&
+        element.tabIndex !== -1 &&
+        element.offsetParent !== null
+    );
+
+    if (!focusableElements.length) {
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey) {
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus({ preventScroll: true });
+      }
+    } else if (document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus({ preventScroll: true });
+    }
+  }
+
+  if (doorOneGiftButton && doorOneModal) {
+    doorOneGiftButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openDoorOneModal();
+    });
+  }
+
+  doorOneModalCloseElements.forEach((element) => {
+    element.addEventListener('click', (event) => {
+      event.preventDefault();
+      closeDoorOneModal();
+    });
+  });
+
+  if (doorOneModal) {
+    doorOneModal.addEventListener('click', (event) => {
+      if (event.target === doorOneModal) {
+        closeDoorOneModal();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (!isDoorOneModalVisible()) {
+      return;
+    }
+
+    if (event.key === 'Escape' || event.key === 'Esc') {
+      event.preventDefault();
+      closeDoorOneModal();
+    } else if (event.key === 'Tab') {
+      trapDoorOneFocus(event);
+    }
+  });
+
   const panes = Array.from(document.querySelectorAll('.door__hinge__pane'));
   if (!panes.length) {
     return;
   }
 
   const unlockedSet = loadUnlockedSet();
+
+  function updateDoorContentVisibility(doorElement, isOpen) {
+    const content = doorElement.querySelector('.door__content');
+    if (content) {
+      content.setAttribute('aria-hidden', String(!isOpen));
+    }
+
+    if (!isOpen && doorElement.classList.contains('door--has-gift')) {
+      closeDoorOneModal();
+    }
+  }
 
   const doors = panes.map((pane, index) => {
     const doorElement = pane.closest('.door');
@@ -90,13 +242,18 @@ document.addEventListener('DOMContentLoaded', () => {
       doorElement.classList.add('door--opened', 'door--unlocked');
     }
 
-    return {
+    const doorData = {
       index,
       pane,
       doorElement,
       countdown,
       releaseDate,
     };
+
+    const isOpen = pane.classList.contains('door__hinge__pane--open');
+    updateDoorContentVisibility(doorElement, isOpen);
+
+    return doorData;
   });
 
   function arePreviousUnlocked(index) {
@@ -127,6 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
       door.countdown.textContent = '';
       door.countdown.classList.remove('door__countdown--visible');
       door.doorElement.classList.remove('door--show-countdown');
+
+      updateDoorContentVisibility(door.doorElement, isOpen);
 
       if (!unlocked && !nextLockedDoor && previousUnlocked) {
         nextLockedDoor = door;
@@ -159,6 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const isOpen = door.pane.classList.toggle('door__hinge__pane--open');
       door.doorElement.classList.toggle('door--opened', isOpen);
       door.doorElement.classList.add('door--unlocked');
+
+      updateDoorContentVisibility(door.doorElement, isOpen);
 
       updateDoorStates();
     });
