@@ -1,5 +1,6 @@
 const storageKey = 'advent-calendar-opened-doors';
 const startDate = new Date(2025, 9, 16);
+
 startDate.setHours(0, 0, 0, 0);
 const doorContentConfigUrl = 'door-content.json';
 
