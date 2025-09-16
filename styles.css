@@ -11,10 +11,10 @@
 
 body {
   padding: 0;
-  margin: 0;
 font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
 
 .advent {
+  margin-left: calc((100vw - (60vw + 150px)) / 2); 
   float: left;
   padding: var(--advent-padding);
   background-image: var(--advent-background-image);
