@@ -11,7 +11,7 @@
     <div class="advent">
         <div class="advent__row">
             <div class="advent__row__cell">
-                <div class="door door--has-video">
+                <div class="door">
                     <div class="door__hinge">
                         <div class="door__hinge__pane">
                             <div class="door__hinge__pane--front door__hinge__pane--one"><span
@@ -32,17 +32,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="door__content door__content--video" aria-hidden="true">
-                        <button type="button" class="door__content__close" aria-label="Fermer la porte 1">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <video class="door__video" controls preload="none">
-                            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-                            Votre navigateur ne supporte pas la lecture vidéo.
-                        </video>
-                    </div>
                 </div>
             </div>
+
 
             <div class="advent__row__cell">
                 <div class="door">
@@ -1043,6 +1035,18 @@
         </div>
 
 
+    </div>
+    <div class="door-modal" id="door-surprise-modal" data-door-modal aria-hidden="true">
+        <div class="door-modal__overlay" data-modal-close></div>
+        <div class="door-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="door-modal-title"
+            tabindex="-1">
+            <button type="button" class="door-modal__close" data-modal-close data-modal-initial-focus
+                aria-label="Fermer le message">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h2 id="door-modal-title" class="door-modal__title" data-modal-title></h2>
+            <div class="door-modal__body" data-modal-body></div>
+        </div>
     </div>
     <div class="message"></div>
 </body>
