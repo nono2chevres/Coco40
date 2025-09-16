@@ -5,15 +5,7 @@
       "text": "Quelqu'un a un message pour vous",
       "type": "video",
       "url": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-      "poster": "media/cadre.jpg",
-      "caption": "Touchez play pour découvrir la surprise du jour."
-    },
-    {
-      "day": 2,
-      "text": "Un souvenir à partager",
-      "type": "photo",
-      "url": "media/cadre.jpg",
-      "caption": "Remplacez cette image par votre photo du jour."
+      "caption": "En route pour 40 jours de surprises..."
     }
   ]
 }
