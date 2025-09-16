@@ -1035,6 +1035,18 @@
 
 
     </div>
+    <div class="door-modal" id="door-surprise-modal" data-door-modal aria-hidden="true">
+        <div class="door-modal__overlay" data-modal-close></div>
+        <div class="door-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="door-modal-title"
+            tabindex="-1">
+            <button type="button" class="door-modal__close" data-modal-close data-modal-initial-focus
+                aria-label="Fermer le message">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h2 id="door-modal-title" class="door-modal__title" data-modal-title></h2>
+            <div class="door-modal__body" data-modal-body></div>
+        </div>
+    </div>
     <div class="message"></div>
 </body>
 

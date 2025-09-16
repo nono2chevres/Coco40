@@ -169,10 +169,224 @@ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-seri
   .door__hinge__pane--thirty-nine { --col: 3; --row: 7; }
   .door__hinge__pane--fourty { --col: 4; --row: 7; }
 
-  .cube {
+.cube {
   position: absolute;
   top: var(--cell-padding);
   left: var(--cell-padding); }
+
+.door__content {
+  position: absolute;
+  top: var(--cell-padding);
+  left: var(--cell-padding);
+  width: calc(0.8 * var(--door-size));
+  height: calc(0.8 * var(--door-size));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  background-image: url('media/cadre.jpg');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.door--opened .door__content {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 4;
+}
+
+.door__content--gift {
+  padding: 8px;
+  background-image: none;
+  background-color: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.door__gift-button {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.door__gift-button:focus-visible {
+  outline: 2px solid #f9a825;
+  outline-offset: 4px;
+}
+
+.door__gift-image {
+  width: 100%;
+  height: auto;
+  max-width: 140px;
+  transform-origin: 50% 100%;
+  animation: gift-bounce 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
+}
+
+@keyframes gift-bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-8px) scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .door__gift-image {
+    animation: none;
+  }
+}
+
+.door-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+.door-modal--visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.door-modal__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  cursor: pointer;
+}
+
+.door-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(90vw, 520px);
+  border-radius: 24px;
+  background: linear-gradient(145deg, #fffdf5, #ffe7d1);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  padding: clamp(20px, 5vw, 32px);
+  text-align: center;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.door-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.door-modal__close:hover,
+.door-modal__close:focus-visible {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
+  outline: none;
+}
+
+.door-modal__close span {
+  transform: translateY(-1px);
+}
+
+.door-modal__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.door-modal__title {
+  margin: 0 0 20px;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: #b23a48;
+  font-weight: 700;
+}
+
+.door-modal__video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: 18px;
+  background-color: #000;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  max-height: min(60vh, 400px);
+  object-fit: cover;
+}
+
+.door-modal__figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.door-modal__image {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  object-fit: cover;
+}
+
+.door-modal__caption {
+  margin: 0;
+  font-size: 1rem;
+  color: #5a3d2b;
+  text-align: center;
+}
+
+.door-modal__fallback {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #5a3d2b;
+  text-align: center;
+}
+
+.body--modal-open {
+  overflow: hidden;
+}
 
 .cube__container {
   width: calc(0.8 * var(--door-size));
