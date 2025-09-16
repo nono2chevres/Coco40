@@ -1,5 +1,5 @@
 const storageKey = 'advent-calendar-opened-doors';
-const startDate = new Date(2025, 8, 16);
+const startDate = new Date(2025, 9, 16);
 startDate.setHours(0, 0, 0, 0);
 const doorContentConfigUrl = 'door-content.json';
 
@@ -238,6 +238,21 @@ function createModalManager(modalElement) {
     activeVideo = null;
   }
 
+  function updateModalBody(nodes) {
+    if (!bodyElement) {
+      return;
+    }
+
+    if (typeof bodyElement.replaceChildren === 'function') {
+      bodyElement.replaceChildren(...nodes);
+    } else {
+      bodyElement.innerHTML = '';
+      nodes.forEach((node) => {
+        bodyElement.appendChild(node);
+      });
+    }
+  }
+
   function renderContent(day, entry) {
     const normalized = entry || normalizeDoorContentEntry(day, null);
 
@@ -245,18 +260,15 @@ function createModalManager(modalElement) {
       titleElement.textContent = normalized ? normalized.title : '';
     }
 
-    if (!bodyElement) {
-      return;
-    }
-
     clearActiveMedia();
-    bodyElement.innerHTML = '';
+    const nodes = [];
 
     if (!normalized) {
       const fallback = document.createElement('p');
       fallback.className = 'door-modal__fallback';
       fallback.textContent = "Le cadeau de ce jour n'est pas encore prêt.";
-      bodyElement.appendChild(fallback);
+      nodes.push(fallback);
+      updateModalBody(nodes);
       return;
     }
 
@@ -273,13 +285,13 @@ function createModalManager(modalElement) {
         video.poster = normalized.poster;
       }
       video.innerHTML = 'Votre navigateur ne supporte pas la lecture vidéo.';
-      bodyElement.appendChild(video);
+      nodes.push(video);
 
       if (normalized.caption) {
         const caption = document.createElement('p');
         caption.className = 'door-modal__caption';
         caption.textContent = normalized.caption;
-        bodyElement.appendChild(caption);
+        nodes.push(caption);
       }
 
       activeVideo = video;
@@ -300,13 +312,16 @@ function createModalManager(modalElement) {
         figure.appendChild(caption);
       }
 
-      bodyElement.appendChild(figure);
+      nodes.push(figure);
+
     } else {
       const fallback = document.createElement('p');
       fallback.className = 'door-modal__fallback';
       fallback.textContent = normalized.fallbackMessage;
-      bodyElement.appendChild(fallback);
+      nodes.push(fallback);
     }
+
+    updateModalBody(nodes);
   }
 
   function open(day, entry) {
@@ -346,9 +361,7 @@ function createModalManager(modalElement) {
 
     clearActiveMedia();
 
-    if (bodyElement) {
-      bodyElement.innerHTML = '';
-    }
+    updateModalBody([]);
 
     modalElement.classList.remove('door-modal--visible');
     modalElement.setAttribute('aria-hidden', 'true');
