@@ -11,7 +11,72 @@
 
 body {
   padding: 0;
-font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.scrolling-title {
+  margin: 32px auto 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  font-size: clamp(1.8rem, 2.6vw + 1rem, 3rem);
+  line-height: 1.2;
+  color: #2f1804;
+}
+
+.scrolling-title__lead {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.scrolling-title__wrapper {
+  position: relative;
+  width: min(92vw, 36rem);
+  overflow: hidden;
+  padding: 0.35rem 0;
+  height: 1.6em;
+}
+
+.scrolling-title__content {
+  --scroll-gap: 1.5rem;
+  --scroll-gap-half: calc(var(--scroll-gap) / 2);
+  display: flex;
+  align-items: center;
+  gap: var(--scroll-gap);
+  animation: scrolling-title-marquee 120s linear infinite;
+}
+
+.scrolling-title__item {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #b95d13;
+}
+
+@keyframes scrolling-title-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - var(--scroll-gap-half)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrolling-title__content {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    --scroll-gap: 0.75rem;
+  }
+
+  .scrolling-title__item[aria-hidden="true"] {
+    display: none;
+  }
+}
 
 .advent {
   margin-left: calc((100vw - (60vw + 150px)) / 2); 
