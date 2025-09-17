@@ -6,6 +6,13 @@
       "type": "video",
       "url": "./media/Day1.mp4",
       "caption": "En route pour 40 jours de surprises..."
+    },
+        {
+      "day": 2,
+      "text": "La chasse au trésor continue",
+      "type": "video",
+      "url": "./media/Day2.mp4",
+      "caption": "Maman quand tu rentres..."
     }
   ]
 }
