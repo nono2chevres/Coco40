@@ -13,6 +13,13 @@
       "type": "video",
       "url": "./media/Day2.mp4",
       "caption": "Maman quand tu rentres..."
+    },
+      {
+      "day": 3,
+      "text": "Une nouvelle carte au trésor est disponible",
+      "type": "image",
+      "url": "./media/Day3.jpg",
+      "caption": "Bonne chance pour la déchiffrer..."
     }
   ]
 }
