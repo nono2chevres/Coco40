@@ -7,19 +7,24 @@
       "url": "./media/Day1.mp4",
       "caption": "En route pour 40 jours de surprises..."
     },
-        {
+    {
       "day": 2,
       "text": "La chasse au trésor continue",
       "type": "video",
       "url": "./media/Day2.mp4",
       "caption": "Maman quand tu rentres..."
     },
-      {
+    {
       "day": 3,
       "text": "Une nouvelle carte au trésor est disponible",
       "type": "image",
       "url": "./media/Day3.jpg",
       "caption": "Bonne chance pour la déchiffrer..."
+    },
+    {
+      "day": 7,
+      "text": "Les préférences du calendrier sont débloquées",
+      "fallback": "Une icône est apparue en bas à droite : tu peux maintenant choisir le fond du calendrier ou activer le mode aléatoire !"
     }
   ]
 }

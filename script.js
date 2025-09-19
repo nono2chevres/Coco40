@@ -1,7 +1,516 @@
 const storageKey = 'advent-calendar-opened-doors';
+const preferencesStorageKey = 'advent-calendar-preferences';
+const preferencesUnlockDoorIndex = 6;
 const startDate = new Date(2025, 8, 16);
 startDate.setHours(0, 0, 0, 0);
 const doorContentConfigUrl = 'door-content.json';
+
+const backgroundChoices = [
+  {
+    id: 'classic',
+    label: 'Classique',
+    images: {
+      large: 'media/background.jpeg',
+      medium: 'media/background2.png',
+      small: 'media/background3.png',
+    },
+    preview: 'media/background.jpeg',
+  },
+  {
+    id: 'Background1',
+    label: 'Les grimaces',
+    images: {
+      large: 'media/bg-1-hd.jpg',
+      medium: 'media/bg-1-md.jpg',
+      small: 'media/bg-1-sd.jpg',
+    },
+    preview: 'media/bg-1-sd.jpg',
+  },
+  {
+    id: 'Background2',
+    label: 'Porte du bonheur',
+    images: {
+      large: 'media/bg-2-hd.jpg',
+      medium: 'media/bg-2-md.jpg',
+      small: 'media/bg-2-sd.jpg',
+    },
+    preview: 'media/bg-2-sd.jpg',
+  },
+  {
+    id: 'Background3',
+    label: '3 ans Alice',
+    images: {
+      large: 'media/bg-3-hd.jpg',
+      medium: 'media/bg-3-md.jpg',
+      small: 'media/bg-3-sd.jpg',
+    },
+    preview: 'media/bg-3-sd.jpg',
+  },
+  {
+    id: 'Background4',
+    label: 'A la plage',
+    images: {
+      large: 'media/bg-4-hd.jpg',
+      medium: 'media/bg-4-md.jpg',
+      small: 'media/bg-4-sd.jpg',
+    },
+    preview: 'media/bg-4-sd.jpg',
+  },
+  {
+    id: 'Background5',
+    label: "Ici c'est...",
+    images: {
+      large: 'media/bg-5-hd.jpg',
+      medium: 'media/bg-5-md.jpg',
+      small: 'media/bg-5-sd.jpg',
+    },
+    preview: 'media/bg-5-sd.jpg',
+  },
+  {
+    id: 'Background6',
+    label: 'Câlins',
+    images: {
+      large: 'media/bg-6-hd.jpg',
+      medium: 'media/bg-6-md.jpg',
+      small: 'media/bg-6-sd.jpg',
+    },
+    preview: 'media/bg-6-sd.jpg',
+  },
+];
+
+function toCssBackgroundValue(value) {
+  if (!value) {
+    return '';
+  }
+
+  const trimmed = String(value).trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  const lower = trimmed.toLowerCase();
+  const isRawCssValue =
+    lower.startsWith('url(') ||
+    lower.startsWith('linear-gradient(') ||
+    lower.startsWith('repeating-linear-gradient(') ||
+    lower.startsWith('radial-gradient(') ||
+    lower.startsWith('repeating-radial-gradient(') ||
+    lower.startsWith('conic-gradient(') ||
+    lower.startsWith('image(') ||
+    lower.startsWith('var(') ||
+    lower.startsWith('data:');
+
+  if (isRawCssValue) {
+    return trimmed;
+  }
+
+  const escaped = trimmed.replace(/'/g, "\\'");
+  return `url('${escaped}')`;
+}
+
+const defaultBackgroundChoiceId = backgroundChoices[0] ? backgroundChoices[0].id : 'classic';
+
+function applyBackgroundChoice(choice) {
+  if (!choice) {
+    return;
+  }
+
+  const root = document.documentElement;
+  const largeSource =
+    choice.images.large || choice.images.medium || choice.images.small || '';
+  const mediumSource = choice.images.medium || choice.images.small || largeSource;
+  const smallSource = choice.images.small || mediumSource;
+
+  const large = toCssBackgroundValue(largeSource);
+  const medium = toCssBackgroundValue(mediumSource);
+  const small = toCssBackgroundValue(smallSource);
+
+  if (large) {
+    root.style.setProperty('--advent-background-image', large);
+  }
+
+  if (medium) {
+    root.style.setProperty('--advent-background-image-medium', medium);
+  }
+
+  if (small) {
+    root.style.setProperty('--advent-background-image-small', small);
+  }
+}
+
+function normalizePreferences(raw) {
+  const fallback = {
+    mode: 'choice',
+    choiceId: defaultBackgroundChoiceId,
+    lastRandomChoiceId: null,
+  };
+
+  if (!raw || typeof raw !== 'object') {
+    return { ...fallback };
+  }
+
+  const normalized = { ...fallback };
+
+  if (raw.mode === 'random') {
+    normalized.mode = 'random';
+  }
+
+  if (typeof raw.choiceId === 'string' && raw.choiceId.trim()) {
+    normalized.choiceId = raw.choiceId.trim();
+  }
+
+  if (typeof raw.lastRandomChoiceId === 'string' && raw.lastRandomChoiceId.trim()) {
+    normalized.lastRandomChoiceId = raw.lastRandomChoiceId.trim();
+  }
+
+  return normalized;
+}
+
+function loadPreferences() {
+  try {
+    const raw = localStorage.getItem(preferencesStorageKey);
+    if (!raw) {
+      return normalizePreferences(null);
+    }
+    const parsed = JSON.parse(raw);
+    return normalizePreferences(parsed);
+  } catch (error) {
+    console.warn("Impossible de lire les préférences enregistrées :", error);
+    return normalizePreferences(null);
+  }
+}
+
+function persistPreferences(preferences) {
+  try {
+    localStorage.setItem(preferencesStorageKey, JSON.stringify(preferences));
+  } catch (error) {
+    console.warn("Impossible d'enregistrer les préférences :", error);
+  }
+}
+
+function applyPreference(rawPreferences, options = {}) {
+  const { persist = true } = options;
+  let preferences = normalizePreferences(rawPreferences);
+
+  const availableChoices = backgroundChoices.slice();
+  if (!availableChoices.length) {
+    return { preferences, appliedChoice: null };
+  }
+
+  let appliedChoice = null;
+
+  if (preferences.mode === 'random') {
+    let pool = availableChoices;
+    if (preferences.lastRandomChoiceId && availableChoices.length > 1) {
+      pool = availableChoices.filter((choice) => choice.id !== preferences.lastRandomChoiceId);
+      if (!pool.length) {
+        pool = availableChoices;
+      }
+    }
+    appliedChoice = pool[Math.floor(Math.random() * pool.length)];
+    preferences.lastRandomChoiceId = appliedChoice.id;
+  } else {
+    appliedChoice =
+      availableChoices.find((choice) => choice.id === preferences.choiceId) ||
+      availableChoices.find((choice) => choice.id === defaultBackgroundChoiceId) ||
+      availableChoices[0];
+    preferences.choiceId = appliedChoice.id;
+    preferences.lastRandomChoiceId = null;
+  }
+
+  if (appliedChoice) {
+    applyBackgroundChoice(appliedChoice);
+  }
+
+  if (persist) {
+    persistPreferences(preferences);
+  }
+
+  return { preferences, appliedChoice };
+}
+
+function createPreferencesController(options = {}) {
+  const toggle = document.querySelector('[data-preferences-toggle]');
+  const container = document.querySelector('[data-preferences]');
+  const dialog = container ? container.querySelector('[data-preferences-dialog]') : null;
+  const form = container ? container.querySelector('[data-preferences-form]') : null;
+  const optionsContainer = container
+    ? container.querySelector('[data-preferences-options]')
+    : null;
+  const backdrop = container ? container.querySelector('[data-preferences-backdrop]') : null;
+  const closeElements = container
+    ? Array.from(container.querySelectorAll('[data-preferences-close]'))
+    : [];
+
+  if (!toggle || !container || !dialog || !form || !optionsContainer) {
+    return {
+      setUnlocked: () => {},
+      setPreferences: () => {},
+      onChange: () => {},
+    };
+  }
+
+  const focusableSelectors = [
+    'button',
+    '[href]',
+    'input',
+    'select',
+    'textarea',
+    '[tabindex]:not([tabindex="-1"])',
+  ];
+
+  let unlocked = false;
+  let isOpen = false;
+  let lastFocusedElement = null;
+  let changeHandler = null;
+  let currentPreferences = normalizePreferences(null);
+
+  function renderOptions() {
+    optionsContainer.innerHTML = '';
+
+    const fragment = document.createDocumentFragment();
+
+    backgroundChoices.forEach((choice) => {
+      const label = document.createElement('label');
+      label.className = 'preferences-option';
+      label.dataset.preferenceValue = choice.id;
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'calendar-background';
+      input.value = choice.id;
+      input.className = 'preferences-option__input';
+      label.appendChild(input);
+
+      const preview = document.createElement('span');
+      preview.className = 'preferences-option__preview';
+      const previewSource =
+        choice.preview || choice.images.large || choice.images.medium || choice.images.small;
+      const previewValue = toCssBackgroundValue(previewSource);
+      if (previewValue) {
+        preview.style.backgroundImage = previewValue;
+      }
+      preview.setAttribute('aria-hidden', 'true');
+      label.appendChild(preview);
+
+      const text = document.createElement('span');
+      text.className = 'preferences-option__label';
+      text.textContent = choice.label;
+      label.appendChild(text);
+
+      fragment.appendChild(label);
+    });
+
+    const randomLabel = document.createElement('label');
+    randomLabel.className = 'preferences-option preferences-option--random';
+
+    const randomInput = document.createElement('input');
+    randomInput.type = 'radio';
+    randomInput.name = 'calendar-background';
+    randomInput.value = 'random';
+    randomInput.className = 'preferences-option__input';
+    randomLabel.appendChild(randomInput);
+
+    const randomPreview = document.createElement('span');
+    randomPreview.className =
+      'preferences-option__preview preferences-option__preview--random';
+    randomPreview.textContent = '🔀';
+    randomPreview.setAttribute('aria-hidden', 'true');
+    randomLabel.appendChild(randomPreview);
+
+    const randomText = document.createElement('span');
+    randomText.className = 'preferences-option__label';
+    randomText.textContent = 'Mode aléatoire';
+    randomLabel.appendChild(randomText);
+
+    fragment.appendChild(randomLabel);
+
+    optionsContainer.appendChild(fragment);
+  }
+
+  function syncState(preferences) {
+    const normalized = normalizePreferences(preferences);
+    currentPreferences = normalized;
+    const targetValue = normalized.mode === 'random' ? 'random' : normalized.choiceId;
+
+    const inputs = Array.from(form.querySelectorAll('input[name="calendar-background"]'));
+    inputs.forEach((input) => {
+      const isChecked = input.value === targetValue;
+      input.checked = isChecked;
+      const option = input.closest('.preferences-option');
+      if (option) {
+        option.classList.toggle('preferences-option--selected', isChecked);
+      }
+    });
+  }
+
+  function close() {
+    if (!isOpen) {
+      return;
+    }
+
+    container.classList.remove('preferences--visible');
+    container.setAttribute('aria-hidden', 'true');
+    container.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('body--preferences-open');
+    isOpen = false;
+
+    if (lastFocusedElement && document.contains(lastFocusedElement)) {
+      lastFocusedElement.focus({ preventScroll: true });
+    }
+
+    lastFocusedElement = null;
+  }
+
+  function trapFocus(event) {
+    const focusableElements = Array.from(
+      container.querySelectorAll(focusableSelectors.join(', '))
+    ).filter((element) => element instanceof HTMLElement && !element.hasAttribute('disabled'));
+
+    if (!focusableElements.length) {
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey) {
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus({ preventScroll: true });
+      }
+    } else if (document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus({ preventScroll: true });
+    }
+  }
+
+  function handleKeydown(event) {
+    if (!isOpen) {
+      return;
+    }
+
+    if (event.key === 'Escape' || event.key === 'Esc') {
+      event.preventDefault();
+      close();
+    } else if (event.key === 'Tab') {
+      trapFocus(event);
+    }
+  }
+
+  function open() {
+    if (!unlocked) {
+      return;
+    }
+
+    if (isOpen) {
+      return;
+    }
+
+    if (typeof options.onOpen === 'function') {
+      try {
+        options.onOpen();
+      } catch (error) {
+        console.warn('Erreur lors de la préparation des préférences :', error);
+      }
+    }
+
+    lastFocusedElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    container.classList.add('preferences--visible');
+    container.setAttribute('aria-hidden', 'false');
+    container.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('body--preferences-open');
+    isOpen = true;
+
+    const initialFocus = form.querySelector('input[name="calendar-background"]:checked');
+    if (initialFocus instanceof HTMLElement) {
+      initialFocus.focus({ preventScroll: true });
+    } else if (dialog instanceof HTMLElement) {
+      dialog.focus({ preventScroll: true });
+    }
+  }
+
+  renderOptions();
+  syncState(currentPreferences);
+
+  toggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    open();
+  });
+
+  if (backdrop) {
+    backdrop.addEventListener('click', () => {
+      close();
+    });
+  }
+
+  closeElements.forEach((element) => {
+    element.addEventListener('click', (event) => {
+      event.preventDefault();
+      close();
+    });
+  });
+
+  container.addEventListener('click', (event) => {
+    if (event.target === container) {
+      close();
+    }
+  });
+
+  form.addEventListener('change', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    let nextPreferences;
+    if (target.value === 'random') {
+      nextPreferences = {
+        ...currentPreferences,
+        mode: 'random',
+      };
+    } else {
+      nextPreferences = {
+        mode: 'choice',
+        choiceId: target.value,
+        lastRandomChoiceId: null,
+      };
+    }
+
+    const result = applyPreference(nextPreferences);
+    currentPreferences = result.preferences;
+    syncState(currentPreferences);
+
+    if (typeof changeHandler === 'function') {
+      changeHandler(currentPreferences);
+    }
+  });
+
+  document.addEventListener('keydown', handleKeydown);
+
+  return {
+    setUnlocked(value) {
+      unlocked = Boolean(value);
+      toggle.classList.toggle('preferences-toggle--visible', unlocked);
+      toggle.hidden = !unlocked;
+      toggle.setAttribute('aria-hidden', unlocked ? 'false' : 'true');
+      if (!unlocked) {
+        close();
+      }
+    },
+    setPreferences(preferences) {
+      syncState(preferences);
+    },
+    onChange(callback) {
+      changeHandler = typeof callback === 'function' ? callback : null;
+    },
+  };
+}
 
 function getReleaseDate(index) {
   const date = new Date(startDate);
@@ -515,6 +1024,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     const modalElement = document.querySelector('[data-door-modal]');
     const modalManager = createModalManager(modalElement);
+    const preferencesController = createPreferencesController({
+      onOpen: () => {
+        if (modalManager && typeof modalManager.close === 'function') {
+          modalManager.close();
+        }
+      },
+    });
+
+    let preferencesState = loadPreferences();
+
+    preferencesController.onChange((updatedPreferences) => {
+      preferencesState = updatedPreferences;
+    });
+
+    ({ preferences: preferencesState } = applyPreference(preferencesState));
+    preferencesController.setPreferences(preferencesState);
+
     const doorContentMap = await fetchDoorContentConfig(doorContentConfigUrl);
 
     const panes = Array.from(document.querySelectorAll('.door__hinge__pane'));
@@ -523,6 +1049,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const unlockedSet = loadUnlockedSet();
+    preferencesController.setUnlocked(unlockedSet.has(preferencesUnlockDoorIndex));
 
     function updateDoorContentVisibility(doorElement, dayNumber, isOpen) {
       const content = doorElement.querySelector('.door__content');
@@ -636,6 +1163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           nextLockedDoor.doorElement.classList.add('door--show-countdown');
         }
       }
+
+      preferencesController.setUnlocked(unlockedSet.has(preferencesUnlockDoorIndex));
     }
 
     doors.forEach((door) => {
