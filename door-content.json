@@ -22,6 +22,13 @@
       "caption": "Bonne chance pour la déchiffrer..."
     },
     {
+      "day": 4,
+      "text": "Avant de partir, il faut s'assurer d'avoir toutes ses affaires",
+      "type": "image",
+      "url": "./media/Day4.jpg",
+      "caption": "Sauras-tu décoder le rébus ?"
+    },
+    {
       "day": 7,
       "text": "Les préférences du calendrier sont débloquées",
       "fallback": "Une icône est apparue en bas à droite : tu peux maintenant choisir le fond du calendrier ou activer le mode aléatoire !"
