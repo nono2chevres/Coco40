@@ -1,7 +1,7 @@
 const storageKey = 'advent-calendar-opened-doors';
 const preferencesStorageKey = 'advent-calendar-preferences';
 const preferencesUnlockDoorIndex = 6;
-const startDate = new Date(2025, 8, 8);
+const startDate = new Date(2025, 8, 16);
 startDate.setHours(0, 0, 0, 0);
 const doorContentConfigUrl = 'door-content.json';
 
