@@ -1050,6 +1050,31 @@
             <div class="door-modal__body" data-modal-body></div>
         </div>
     </div>
+    <button type="button" class="preferences-toggle" data-preferences-toggle aria-hidden="true" hidden
+        aria-haspopup="dialog" aria-controls="preferences-dialog" aria-expanded="false"
+        title="Ouvrir les préférences">
+        <span class="preferences-toggle__icon" aria-hidden="true">⚙️</span>
+        <span class="visually-hidden">Ouvrir les préférences</span>
+    </button>
+    <div class="preferences" data-preferences aria-hidden="true" hidden>
+        <div class="preferences__backdrop" data-preferences-backdrop data-preferences-close></div>
+        <div class="preferences__dialog" id="preferences-dialog" role="dialog" aria-modal="true"
+            aria-labelledby="preferences-title" tabindex="-1" data-preferences-dialog>
+            <div class="preferences__header">
+                <h2 id="preferences-title" class="preferences__title">Préférences</h2>
+                <button type="button" class="preferences__close" data-preferences-close
+                    aria-label="Fermer les préférences">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <p class="preferences__description">Choisis le fond que tu souhaites afficher sur le calendrier.</p>
+            <form class="preferences__form" data-preferences-form>
+                <div class="preferences__options" data-preferences-options></div>
+            </form>
+            <p class="preferences__hint">Ton choix est enregistré pour ta prochaine visite. Tu peux aussi activer
+                le mode aléatoire pour une nouvelle surprise à chaque fois.</p>
+        </div>
+    </div>
     <div class="message"></div>
 </body>
 
