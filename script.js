@@ -1,7 +1,7 @@
 const storageKey = 'advent-calendar-opened-doors';
 const preferencesStorageKey = 'advent-calendar-preferences';
 const preferencesUnlockDoorIndex = 6;
-const startDate = new Date(2025, 8, 16);
+const startDate = new Date(2025, 8, 8);
 startDate.setHours(0, 0, 0, 0);
 const doorContentConfigUrl = 'door-content.json';
 
@@ -17,52 +17,64 @@ const backgroundChoices = [
     preview: 'media/background.jpeg',
   },
   {
-    id: 'aurore-rose',
-    label: 'Aurore rose',
+    id: 'Background1',
+    label: 'Les grimaces',
     images: {
-      large: 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)',
+      large: 'media/bg-1-hd.jpg',
+      medium: 'media/bg-1-md.jpg',
+      small: 'media/bg-1-sd.jpg',
     },
-    preview: 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)',
+    preview: 'media/bg-1-sd.jpg',
   },
   {
-    id: 'foret-sapin',
-    label: 'Forêt de sapins',
+    id: 'Background2',
+    label: 'Porte du bonheur',
     images: {
-      large: 'linear-gradient(135deg, #0f766e 0%, #16a34a 55%, #bbf7d0 100%)',
+      large: 'media/bg-2-hd.jpg',
+      medium: 'media/bg-2-md.jpg',
+      small: 'media/bg-2-sd.jpg',
     },
-    preview: 'linear-gradient(135deg, #0f766e 0%, #16a34a 55%, #bbf7d0 100%)',
+    preview: 'media/bg-2-sd.jpg',
   },
   {
-    id: 'nuit-etoilee',
-    label: 'Nuit étoilée',
+    id: 'Background3',
+    label: '3 ans Alice',
     images: {
-      large: 'linear-gradient(135deg, #0b1d51 0%, #1d2d5f 55%, #4c6ef5 100%)',
+      large: 'media/bg-3-hd.jpg',
+      medium: 'media/bg-3-md.jpg',
+      small: 'media/bg-3-sd.jpg',
     },
-    preview: 'linear-gradient(135deg, #0b1d51 0%, #1d2d5f 55%, #4c6ef5 100%)',
+    preview: 'media/bg-3-sd.jpg',
   },
   {
-    id: 'candy-cane',
-    label: 'Candy cane',
+    id: 'Background4',
+    label: 'A la plage',
     images: {
-      large: 'linear-gradient(135deg, #fca5a5 0%, #f87171 50%, #ef4444 100%)',
+      large: 'media/bg-4-hd.jpg',
+      medium: 'media/bg-4-md.jpg',
+      small: 'media/bg-4-sd.jpg',
     },
-    preview: 'linear-gradient(135deg, #fca5a5 0%, #f87171 50%, #ef4444 100%)',
+    preview: 'media/bg-4-sd.jpg',
   },
   {
-    id: 'givre-doux',
-    label: 'Givre doux',
+    id: 'Background5',
+    label: "Ici c'est...",
     images: {
-      large: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)',
+      large: 'media/bg-5-hd.jpg',
+      medium: 'media/bg-5-md.jpg',
+      small: 'media/bg-5-sd.jpg',
     },
-    preview: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)',
+    preview: 'media/bg-5-sd.jpg',
   },
   {
-    id: 'epices-hivernales',
-    label: 'Épices hivernales',
+    id: 'Background6',
+    label: 'Câlins',
     images: {
-      large: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%)',
+      large: 'media/bg-6-hd.jpg',
+      medium: 'media/bg-6-md.jpg',
+      small: 'media/bg-6-sd.jpg',
     },
-    preview: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #f97316 100%)',
+    preview: 'media/bg-6-sd.jpg',
   },
 ];
 
