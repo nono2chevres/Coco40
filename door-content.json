@@ -32,6 +32,13 @@
       "day": 7,
       "text": "Les préférences du calendrier sont débloquées",
       "fallback": "Une icône est apparue en bas à droite : tu peux maintenant choisir le fond du calendrier ou activer le mode aléatoire !"
+    },
+        {
+      "day": 13,
+      "text": "Une petite bichette a une demande pour toi...",
+      "type": "video",
+      "url": "./media/Day13.mp4",
+      "caption": "Maman... Tu peux recoudre mon doudou?"
     }
   ]
 }
